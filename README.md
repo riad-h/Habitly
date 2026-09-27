@@ -6,6 +6,19 @@ Habitly is a calm, minimal habit tracking application that helps you build consi
 
 ---
 
+## 📚 Documentation Files
+
+| File | What It Contains |
+|------|-----------------|
+| **[SETUP_GUIDE.md](./SETUP_GUIDE.md)** | 🟢 **Start here!** Step-by-step guide for beginners, teachers, and non-developers |
+| **[README.md](./README.md)** | This file — technical documentation and project overview |
+| **[.env.example](./.env.example)** | Template for environment variables (copy to `.env`) |
+| **[supabase/migrations/001_initial_schema.sql](./supabase/migrations/001_initial_schema.sql)** | Database setup script |
+
+> 👉 **New to this? Start with the [SETUP_GUIDE.md](./SETUP_GUIDE.md)** — it explains everything from installing Node.js to running the app.
+
+---
+
 ## 📖 What is Habitly?
 
 Habitly is a web application for tracking daily habits. It helps you:

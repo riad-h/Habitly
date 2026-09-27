@@ -12,22 +12,24 @@ dist/
 # Test coverage
 coverage/
 
-# IDE
+# IDE and editor files
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
-
-# OS
 .DS_Store
-Thumbs.db
 
 # Logs
 *.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Server
+# OS files
+Thumbs.db
+
+# Server dependencies (if separate)
 server/node_modules/
 .next/
 build/
