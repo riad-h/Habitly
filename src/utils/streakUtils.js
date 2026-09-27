@@ -65,10 +65,10 @@ export function calculateLongestStreak(completions) {
   let current = 1;
   
   for (let i = 1; i < sortedDates.length; i++) {
-    const prevDate: Date = parseDate(sortedDates[i - 1]);
-    const currDate: Date = parseDate(sortedDates[i]);
-    const diffMs: number = Number(currDate.getTime()) - Number(prevDate.getTime());
-    const diffDays: number = Math.round(diffMs / (1000 * 60 * 60 * 24));
+    const prevDate = parseDate(sortedDates[i - 1]);
+    const currDate = parseDate(sortedDates[i]);
+    const diffMs = currDate.getTime() - prevDate.getTime();
+    const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
     
     if (diffDays === 1) {
       current++;
@@ -88,10 +88,10 @@ export function calculateCompletionRate(completions, days, createdAt) {
   if (days === undefined) days = 30;
   if (!completions || completions.length === 0) return 0;
   
-  const today: Date = new Date();
-  const createdDate: Date = createdAt ? parseDate(createdAt) : new Date(0);
+  const today = new Date();
+  const createdDate = createdAt ? parseDate(createdAt) : new Date(0);
   
-  const daysSinceCreation: number = Math.floor((Number(today.getTime()) - Number(createdDate.getTime())) / (1000 * 60 * 60 * 24)) + 1;
+  const daysSinceCreation = Math.floor((today.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
   const effectiveDays = Math.min(days, daysSinceCreation);
   
   if (effectiveDays <= 0) return 0;

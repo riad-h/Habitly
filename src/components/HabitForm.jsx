@@ -22,7 +22,7 @@ export default function HabitForm({ habit = null, onSubmit, onCancel, loading })
   const [color, setColor] = useState(COLORS[0].value);
   const [frequency, setFrequency] = useState('daily');
   const [targetDays, setTargetDays] = useState([0, 1, 2, 3, 4, 5, 6]);
-  const [errors, setErrors] = useState<{name?: string | null, description?: string | null}>({});
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (habit) {

@@ -153,7 +153,7 @@ export async function archiveHabit(habitId, userId) {
 
 // ============ COMPLETIONS ============
 
-export async function getCompletions(userId, habitId?) {
+export async function getCompletions(userId, habitId) {
   const completions = getStore(STORAGE_KEYS.COMPLETIONS);
   let filtered = completions.filter(c => c.user_id === userId);
   if (habitId) {
