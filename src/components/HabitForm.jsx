@@ -1,17 +1,17 @@
 /**
- * HabitForm — create or edit a habit
+ * HabitForm — create or edit a habit (HabitFlow design)
  */
 
 import { useState, useEffect } from 'react';
 import { validateHabitName, validateHabitDescription } from '../utils/validation';
 
 const COLORS = [
-  { name: 'Default', value: '#171717' },
-  { name: 'Green', value: '#16a34a' },
-  { name: 'Blue', value: '#2563eb' },
-  { name: 'Purple', value: '#7c3aed' },
-  { name: 'Orange', value: '#ea580c' },
-  { name: 'Pink', value: '#db2777' },
+  { name: 'Leaf', value: '#23854f' },
+  { name: 'Gold', value: '#dd9a1d' },
+  { name: 'Coral', value: '#d95a38' },
+  { name: 'Teal', value: '#2b8a99' },
+  { name: 'Plum', value: '#a45c9e' },
+  { name: 'Pine', value: '#5c7a6b' },
 ];
 
 const DAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
@@ -36,23 +36,17 @@ export default function HabitForm({ habit = null, onSubmit, onCancel, loading })
 
   const toggleDay = (day) => {
     setTargetDays(prev => 
-      prev.includes(day) 
-        ? prev.filter(d => d !== day)
-        : [...prev, day].sort()
+      prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day].sort()
     );
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
     const nameValidation = validateHabitName(name);
     const descValidation = validateHabitDescription(description);
     
     if (!nameValidation.valid || !descValidation.valid) {
-      setErrors({
-        name: nameValidation.error,
-        description: descValidation.error,
-      });
+      setErrors({ name: nameValidation.error, description: descValidation.error });
       return;
     }
     
@@ -66,12 +60,12 @@ export default function HabitForm({ habit = null, onSubmit, onCancel, loading })
   };
 
   return (
-    <form className="auth-form" onSubmit={handleSubmit}>
-      <div className="form-group">
-        <label className="form-label" htmlFor="habit-name">Habit name</label>
+    <form onSubmit={handleSubmit} className="stack-s">
+      <div>
+        <label className="label" htmlFor="habit-name">Habit name</label>
         <input
           id="habit-name"
-          className="form-input"
+          className="input"
           type="text"
           value={name}
           onChange={(e) => { setName(e.target.value); setErrors(prev => ({...prev, name: null})); }}
@@ -79,46 +73,57 @@ export default function HabitForm({ habit = null, onSubmit, onCancel, loading })
           maxLength={100}
           autoFocus
         />
-        {errors.name && <span className="form-error">{errors.name}</span>}
+        {errors.name && <span className="muted" style={{ fontSize: '12px', color: 'var(--coral)', marginTop: '4px', display: 'block' }}>{errors.name}</span>}
       </div>
       
-      <div className="form-group">
-        <label className="form-label" htmlFor="habit-description">Description (optional)</label>
+      <div>
+        <label className="label" htmlFor="habit-description">
+          Description 
+          <span className="label-note"> (optional)</span>
+        </label>
         <textarea
           id="habit-description"
-          className="form-input form-textarea"
+          className="input"
           value={description}
           onChange={(e) => { setDescription(e.target.value); setErrors(prev => ({...prev, description: null})); }}
           placeholder="Why is this habit important to you?"
           maxLength={500}
         />
-        {errors.description && <span className="form-error">{errors.description}</span>}
+        {errors.description && <span className="muted" style={{ fontSize: '12px', color: 'var(--coral)', marginTop: '4px', display: 'block' }}>{errors.description}</span>}
       </div>
       
-      <div className="form-group">
-        <label className="form-label">Frequency</label>
-        <select
-          className="form-input form-select"
-          value={frequency}
-          onChange={(e) => setFrequency(e.target.value)}
-        >
-          <option value="daily">Every day</option>
-          <option value="custom">Custom days</option>
-        </select>
+      <div>
+        <label className="label">Frequency</label>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button 
+            type="button" 
+            className={`chip ${frequency === 'daily' ? 'on' : ''}`}
+            onClick={() => setFrequency('daily')}
+            style={frequency === 'daily' ? { background: 'var(--ink)', borderColor: 'var(--ink)', color: 'var(--bg)' } : {}}
+          >
+            Every day
+          </button>
+          <button 
+            type="button" 
+            className={`chip ${frequency === 'custom' ? 'on' : ''}`}
+            onClick={() => setFrequency('custom')}
+            style={frequency === 'custom' ? { background: 'var(--ink)', borderColor: 'var(--ink)', color: 'var(--bg)' } : {}}
+          >
+            Custom days
+          </button>
+        </div>
       </div>
       
       {frequency === 'custom' && (
-        <div className="form-group">
-          <label className="form-label">Target days</label>
+        <div>
+          <label className="label">Target days</label>
           <div className="day-selector">
             {DAYS.map((label, index) => (
               <button
                 key={index}
                 type="button"
-                className={`day-btn ${targetDays.includes(index) ? 'active' : ''}`}
+                className={`day-btn ${targetDays.includes(index) ? 'on' : ''}`}
                 onClick={() => toggleDay(index)}
-                aria-label={label}
-                aria-pressed={targetDays.includes(index)}
               >
                 {label}
               </button>
@@ -127,28 +132,27 @@ export default function HabitForm({ habit = null, onSubmit, onCancel, loading })
         </div>
       )}
       
-      <div className="form-group">
-        <label className="form-label">Color</label>
-        <div className="color-options">
+      <div>
+        <label className="label">Color</label>
+        <div className="swatch-grid">
           {COLORS.map((c) => (
             <button
               key={c.value}
               type="button"
-              className={`color-option ${color === c.value ? 'selected' : ''}`}
+              className={`swatch ${color === c.value ? 'selected' : ''}`}
               style={{ backgroundColor: c.value }}
               onClick={() => setColor(c.value)}
               aria-label={c.name}
-              aria-pressed={color === c.value}
             />
           ))}
         </div>
       </div>
       
-      <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
-        <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
-          {loading ? 'Saving...' : (habit ? 'Update habit' : 'Create habit')}
+      <div className="row-s" style={{ marginTop: '12px' }}>
+        <button type="submit" className="btn btn-primary grow" disabled={loading}>
+          {loading ? <><span className="spin" /> Saving...</> : (habit ? 'Update habit' : 'Create habit')}
         </button>
-        <button type="button" className="btn btn-secondary" onClick={onCancel}>
+        <button type="button" className="btn btn-ghost" onClick={onCancel}>
           Cancel
         </button>
       </div>

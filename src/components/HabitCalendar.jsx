@@ -1,9 +1,9 @@
 /**
- * HabitCalendar — simple monthly calendar view for habit history
+ * HabitCalendar — monthly calendar view (HabitFlow design)
  */
 
 import { useState } from 'react';
-import { getCalendarMonth, getMonthName, DAY_LABELS, getToday } from '../utils/dateUtils';
+import { getCalendarMonth, getMonthName, DAY_LABELS } from '../utils/dateUtils';
 import { getCompletionMap } from '../utils/streakUtils';
 
 export default function HabitCalendar({ completions }) {
@@ -13,7 +13,6 @@ export default function HabitCalendar({ completions }) {
   
   const weeks = getCalendarMonth(currentYear, currentMonth);
   
-  // Build completion map for the visible month
   const startDate = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-01`;
   const lastDay = new Date(currentYear, currentMonth + 1, 0).getDate();
   const endDate = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
@@ -36,50 +35,71 @@ export default function HabitCalendar({ completions }) {
       setCurrentMonth(currentMonth + 1);
     }
   };
-  
-  const isCurrentMonthView = currentMonth === today.getMonth() && currentYear === today.getFullYear();
 
   return (
-    <div className="calendar-container">
-      <div className="section-header">
-        <h3 className="calendar-month-title">
+    <div>
+      {/* Month navigation */}
+      <div className="row spread" style={{ marginBottom: '16px' }}>
+        <h3 className="h2">
           {getMonthName(currentMonth)} {currentYear}
         </h3>
-        <div style={{ display: 'flex', gap: '0.25rem' }}>
-          <button className="btn btn-ghost btn-sm" onClick={prevMonth} aria-label="Previous month">
+        <div className="row-s">
+          <button className="btn btn-ghost btn-s" onClick={prevMonth} aria-label="Previous month">
             ←
           </button>
-          {!isCurrentMonthView && (
-            <button className="btn btn-ghost btn-sm" onClick={() => { setCurrentMonth(today.getMonth()); setCurrentYear(today.getFullYear()); }}>
-              Today
-            </button>
-          )}
-          <button className="btn btn-ghost btn-sm" onClick={nextMonth} aria-label="Next month">
+          <button 
+            className="btn btn-ghost btn-s" 
+            onClick={() => { setCurrentMonth(today.getMonth()); setCurrentYear(today.getFullYear()); }}
+          >
+            Today
+          </button>
+          <button className="btn btn-ghost btn-s" onClick={nextMonth} aria-label="Next month">
             →
           </button>
         </div>
       </div>
       
-      <div className="calendar-grid">
+      {/* Calendar grid */}
+      <div className="cal-grid">
         {DAY_LABELS.map((label, i) => (
-          <div key={i} className="calendar-day-header">{label}</div>
+          <div key={i} className="cal-head">{label}</div>
         ))}
         
         {weeks.flat().map((day, i) => {
           if (!day.date) {
-            return <div key={i} className="calendar-day" />;
+            return <div key={i} className="cal-cell" style={{ visibility: 'hidden' }} />;
           }
           
           const isCompleted = !!completionMap[day.date];
-          const isToday = day.isToday;
           
-          let className = 'calendar-day';
-          if (day.isCurrentMonth) className += ' current-month';
-          if (isToday) className += ' today';
-          if (isCompleted) className += ' completed';
+          let style = {
+            color: day.isCurrentMonth ? 'var(--ink)' : 'var(--mut)',
+            background: 'transparent',
+          };
+          
+          if (isCompleted) {
+            style = {
+              ...style,
+              background: 'var(--leaf-soft)',
+              color: 'var(--leaf-deep)',
+            };
+          }
+          
+          if (day.isToday) {
+            style = {
+              ...style,
+              fontWeight: 800,
+              ...(isCompleted ? {
+                background: 'var(--leaf)',
+                color: '#fff',
+              } : {
+                boxShadow: 'inset 0 0 0 1.5px var(--leaf)',
+              }),
+            };
+          }
           
           return (
-            <div key={i} className={className} title={day.date}>
+            <div key={i} className="cal-cell" style={style} title={day.date}>
               {day.day}
             </div>
           );
