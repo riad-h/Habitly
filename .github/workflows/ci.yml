@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build frontend
+        run: npm run build
+        env:
+          # Provide dummy values so build doesn't fail
+          VITE_SUPABASE_URL: https://demo.supabase.co
+          VITE_SUPABASE_ANON_KEY: demo-key
+
+      - name: Verify server syntax
+        run: node --check server/server.js
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy info
+        run: |
+          echo "✅ Build passed! To deploy:"
+          echo "1. Push to main branch"
+          echo "2. Connect your hosting platform to this repository"
+          echo "3. Set environment variables in your hosting platform"
+          echo ""
+          echo "Frontend: Deploy dist/ folder to any static host (Vercel, Netlify, etc.)"
+          echo "Backend: Deploy server/ to any Node.js host (Railway, Render, Fly.io, etc.)"

@@ -1,0 +1,15 @@
+{
+  "name": "habitly-server",
+  "version": "1.0.0",
+  "description": "Habitly backend server — Pure Node.js HTTP server for AI habit generation",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
