@@ -1,16 +1,20 @@
 /**
  * Habitly — Main Application Component
  * 
- * Sidebar layout with dark mode support, inspired by HabitFlow design.
+ * Complete app with sidebar navigation, dark mode, and all pages
  */
 
 import { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './hooks/useAuth';
+import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import History from './pages/History';
+import Stats from './pages/Stats';
+import Coach from './pages/Coach';
 import Profile from './pages/Profile';
+import Settings from './pages/Settings';
 
 // SVG Icons
 const Icons = {
@@ -34,10 +38,29 @@ const Icons = {
       <line x1="3" x2="21" y1="10" y2="10"/>
     </svg>
   ),
+  chart: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" x2="18" y1="20" y2="10"/>
+      <line x1="12" x2="12" y1="20" y2="4"/>
+      <line x1="6" x2="6" y1="20" y2="14"/>
+    </svg>
+  ),
+  bot: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/>
+      <path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/>
+    </svg>
+  ),
   user: (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
       <circle cx="12" cy="7" r="4"/>
+    </svg>
+  ),
+  settings: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+      <circle cx="12" cy="12" r="3"/>
     </svg>
   ),
   logout: (
@@ -65,13 +88,13 @@ const Icons = {
       <path d="M5 12h14"/><path d="M12 5v14"/>
     </svg>
   ),
-  check: (
-    <svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
-  ),
 };
 
 function AppContent() {
   const { user, loading, isAuthenticated, signOut } = useAuth();
+  const [showLanding, setShowLanding] = useState(() => {
+    return !localStorage.getItem('habitly-seen-landing');
+  });
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [authPage, setAuthPage] = useState('login');
   const [darkMode, setDarkMode] = useState(() => {
@@ -100,6 +123,18 @@ function AppContent() {
     );
   }
 
+  // Show landing page first time
+  if (showLanding && !isAuthenticated) {
+    return (
+      <Landing 
+        onGetStarted={() => {
+          localStorage.setItem('habitly-seen-landing', 'true');
+          setShowLanding(false);
+        }} 
+      />
+    );
+  }
+
   // Not authenticated — show auth pages
   if (!isAuthenticated) {
     if (authPage === 'signup') {
@@ -108,14 +143,18 @@ function AppContent() {
     return <Login onSwitchToSignup={() => setAuthPage('signup')} />;
   }
 
-  const displayName = user?.display_name || user?.email?.split('@')[0] || 'Friend';
-
   const renderPage = () => {
     switch (currentPage) {
       case 'history':
         return <History />;
+      case 'stats':
+        return <Stats />;
+      case 'coach':
+        return <Coach />;
       case 'profile':
         return <Profile />;
+      case 'settings':
+        return <Settings />;
       default:
         return <Dashboard />;
     }
@@ -124,7 +163,10 @@ function AppContent() {
   const getPageTitle = () => {
     switch (currentPage) {
       case 'history': return 'History';
+      case 'stats': return 'Statistics';
+      case 'coach': return 'AI Coach';
       case 'profile': return 'Profile';
+      case 'settings': return 'Settings';
       default: return 'Today';
     }
   };
@@ -154,16 +196,41 @@ function AppContent() {
             <span>History</span>
           </button>
           <button 
+            className={`nav-item ${currentPage === 'stats' ? 'active' : ''}`}
+            onClick={() => setCurrentPage('stats')}
+          >
+            {Icons.chart}
+            <span>Statistics</span>
+          </button>
+          <button 
+            className={`nav-item ${currentPage === 'coach' ? 'active' : ''}`}
+            onClick={() => setCurrentPage('coach')}
+          >
+            {Icons.bot}
+            <span>AI Coach</span>
+          </button>
+          <button 
             className={`nav-item ${currentPage === 'profile' ? 'active' : ''}`}
             onClick={() => setCurrentPage('profile')}
           >
             {Icons.user}
             <span>Profile</span>
           </button>
+          <button 
+            className={`nav-item ${currentPage === 'settings' ? 'active' : ''}`}
+            onClick={() => setCurrentPage('settings')}
+          >
+            {Icons.settings}
+            <span>Settings</span>
+          </button>
         </nav>
         
         <div className="side-foot stack-s">
-          <button className="theme-toggle" onClick={() => setDarkMode(!darkMode)} aria-label="Toggle theme">
+          <button 
+            className="theme-toggle" 
+            onClick={() => setDarkMode(!darkMode)} 
+            aria-label="Toggle theme"
+          >
             {darkMode ? Icons.sun : Icons.moon}
           </button>
           <button className="nav-item" onClick={signOut}>
@@ -208,6 +275,20 @@ function AppContent() {
           <span>History</span>
         </button>
         <button 
+          className={`mnav-item ${currentPage === 'stats' ? 'active' : ''}`}
+          onClick={() => setCurrentPage('stats')}
+        >
+          {Icons.chart}
+          <span>Stats</span>
+        </button>
+        <button 
+          className={`mnav-item ${currentPage === 'coach' ? 'active' : ''}`}
+          onClick={() => setCurrentPage('coach')}
+        >
+          {Icons.bot}
+          <span>Coach</span>
+        </button>
+        <button 
           className={`mnav-item ${currentPage === 'profile' ? 'active' : ''}`}
           onClick={() => setCurrentPage('profile')}
         >
@@ -217,7 +298,11 @@ function AppContent() {
       </nav>
 
       {/* FAB for mobile */}
-      <button className="fab" aria-label="Add habit">
+      <button 
+        className="fab" 
+        aria-label="Add habit"
+        onClick={() => setCurrentPage('dashboard')}
+      >
         {Icons.plus}
       </button>
     </div>

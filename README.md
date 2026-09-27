@@ -21,14 +21,27 @@ Habitly is a calm, minimal habit tracking application that helps you build consi
 
 ## 📖 What is Habitly?
 
-Habitly is a web application for tracking daily habits. It helps you:
+Habitly is a comprehensive habit tracking application inspired by HabitFlow. It helps you:
 
+### Core Features
 - ✅ **Create habits** you want to build (reading, exercise, meditation, etc.)
 - ✅ **Track daily** — mark habits as done each day with one tap
 - ✅ **See streaks** — watch your consistency grow with fire 🔥 streaks
-- ✅ **View history** — a simple calendar showing your completion pattern
+- ✅ **View history** — monthly calendar showing your completion pattern
 - ✅ **Get AI suggestions** — describe a goal and get habit ideas powered by Grok AI
 - ✅ **Stay private** — all data is stored securely in your own Supabase database
+
+### Advanced Features
+- 🏠 **Landing Page** — Beautiful marketing page with feature showcase and demo preview
+- 📊 **Statistics Dashboard** — Activity heatmap (GitHub-style), weekly bar charts, completion rates
+- 🤖 **AI Coach** — Interactive chat interface with personalized habit advice and insights
+- 📈 **Rich Analytics** — Current streak, longest streak, completion rate, total completions
+- 🎨 **Modern UI** — HabitFlow-inspired design with earthy colors, smooth animations, and dark mode
+- ⚙️ **Settings** — Customize theme, set daily reminders, manage your data
+- 🔔 **Reminders** — Get notified to complete your habits at your preferred time
+- 📱 **Fully Responsive** — Sidebar navigation on desktop, bottom nav + FAB on mobile
+- ✨ **Smooth Animations** — Pop, modal, toast, and burst effects throughout
+- 🌙 **Dark Mode** — Full dark mode support with smooth transitions
 
 ### Who is this for?
 
